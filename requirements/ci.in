@@ -1,0 +1,6 @@
+-r common.in
+
+pytest<6.0  # wait for fix https://github.com/klen/pylama/pull/189
+pytest-cov
+pylama
+pytest-bandit
