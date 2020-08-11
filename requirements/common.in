@@ -1,0 +1,4 @@
+vis-ghostdb
+
+celery[redis]
+envparse
