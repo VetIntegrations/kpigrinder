@@ -1,1 +1,3 @@
-CELERY_BROKER_URL=redis://localhost:6379/5
+CELERY_BROKER_URL=redis://localhost:6379/0
+
+SECRET_MANAGER_NAME_PREFIX=local__

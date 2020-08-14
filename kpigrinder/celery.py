@@ -2,6 +2,8 @@ import os
 import logging
 from celery import Celery
 
+from ghostdb.db import meta
+
 
 logger = logging.getLogger('kpigrinder')
 
@@ -18,3 +20,5 @@ def discover_tasks():
 app = Celery('KPIgrinder')
 app.config_from_object('kpigrinder.config', namespace='CELERY')
 discover_tasks()
+
+meta.initialize()

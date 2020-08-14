@@ -2,3 +2,4 @@ vis-ghostdb
 
 celery[redis]
 envparse
+google-cloud-secret-manager
