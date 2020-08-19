@@ -1,0 +1,37 @@
+import time
+import orjson
+from hashlib import sha1
+
+from kpigrinder.config import STORAGE_REGISTRY_TTL
+from kpigrinder.utils.singleton import Singleton
+
+
+class StorageRegistry(metaclass=Singleton):
+
+    def __init__(self):
+        self._storages = {
+            # [ttl, storage instance],
+        }
+
+    def get_storage(self, klass, options: dict):
+        key = '{src_path}:{class_name}-{params}'.format(
+            src_path=klass.__module__,
+            class_name=klass.__name__,
+            params=sha1(orjson.dumps(options)).hexdigest(),
+        )
+
+        ttl, instance = self._storages.get(key, [0, None])
+        if instance is None or time.time() > ttl:
+            instance = klass()
+            instance.connect(options)
+            self._storages[key] = [None, instance]
+
+        self._storages[key][0] = time.time() + STORAGE_REGISTRY_TTL
+
+        return instance
+
+    def clean(self):
+        tm = time.time()
+        for key, (ttl, _) in self._storages:
+            if tm > ttl:
+                del self._storages[key]

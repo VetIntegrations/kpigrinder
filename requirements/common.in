@@ -2,4 +2,7 @@ vis-ghostdb
 
 celery[redis]
 envparse
+orjson
+sentry-sdk
 google-cloud-secret-manager
+google-cloud-bigquery
