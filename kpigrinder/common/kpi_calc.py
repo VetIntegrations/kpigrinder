@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, session
 
 from ghostdb.db.models import kpi as kpi_models
+from kpigrinder import config
 from kpigrinder.utils.secret_manager import SecretManager
 
 
@@ -42,11 +43,12 @@ class BaseKPICalculation(KPICalculationInterface):
 
     def process(self, dt: date, query_filter: dict = None):
         db = self.get_db_connection(
-            self.get_db_uri(self.get_credentials('ghostdb'))
+            self.get_db_uri(self.get_credentials(config.CONNECTION_GHOSTDB))
         )
 
         for kpi_value in self.calculate(db, dt):
-            print(kpi_value)
+            for storage in self._storages:
+                storage.store(kpi_value)
 
     def get_storages(self):
         return self._storages
@@ -76,4 +78,4 @@ class BaseKPICalculation(KPICalculationInterface):
     def get_credentials(self, name: str):
         sm = SecretManager()
 
-        return sm.get_secret('credentials-connection-{}'.format(name))
+        return sm.get_secret(name)
