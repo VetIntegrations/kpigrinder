@@ -30,8 +30,9 @@ class KPICalculationInterface(abc.ABC):
     def calculate(self, db: session.Session, dt: date):
         ...
 
-    @abc.abstractmethod
-    def get_credentials(self, name: str):
+    @staticmethod
+    @abc.abstractstaticmethod
+    def get_credentials(name: str):
         ...
 
 
@@ -47,8 +48,7 @@ class BaseKPICalculation(KPICalculationInterface):
         )
 
         for kpi_value in self.calculate(db, dt):
-            for storage in self._storages:
-                storage.store(kpi_value)
+            self.store(kpi_value)
 
     def get_storages(self):
         return self._storages
@@ -75,7 +75,8 @@ class BaseKPICalculation(KPICalculationInterface):
 
         return db()
 
-    def get_credentials(self, name: str):
+    @staticmethod
+    def get_credentials(name: str):
         sm = SecretManager()
 
         return sm.get_secret(name)

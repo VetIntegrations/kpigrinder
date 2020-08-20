@@ -32,6 +32,10 @@ class StorageRegistry(metaclass=Singleton):
 
     def clean(self):
         tm = time.time()
-        for key, (ttl, _) in self._storages:
+        rotten_keys = []
+        for key, (ttl, _) in self._storages.items():
             if tm > ttl:
-                del self._storages[key]
+                rotten_keys.append(key)
+
+        for key in rotten_keys:
+            del self._storages[key]

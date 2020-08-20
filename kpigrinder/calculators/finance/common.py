@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy import func
+from sqlalchemy.sql import expression as expr
 
 from ghostdb.bl.selectors.kpi import KPISelector
 from ghostdb.db.models.business import Business
@@ -27,10 +28,14 @@ def get_gross_revenue(
         [
             (
                 'amount',
-                func.sum(func.IF(
-                    OrderItem.unit_price.is_(None),
-                    OrderItem.amount / 100,
-                    OrderItem.unit_price * OrderItem.quantity / 100
+                func.sum(expr.case(
+                    [
+                        (
+                            OrderItem.unit_price.is_(None),
+                            OrderItem.amount / 100,
+                        ),
+                    ],
+                    else_=OrderItem.unit_price * OrderItem.quantity / 100
                 ))
             ),
         ]

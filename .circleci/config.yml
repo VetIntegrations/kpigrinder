@@ -4,8 +4,19 @@ jobs:
   test:
     docker:
       - image: circleci/python:3.8
+      - image: circleci/postgres:12-ram
+        environment:
+          POSTGRES_DB: vis_test
+          POSTGRES_USER: vis
+          POSTGRES_PASSWORD: vis
+      - image: circleci/redis:alpine
     steps:
       - checkout
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "requirements/ci.txt" }}
@@ -29,18 +40,27 @@ jobs:
             - ../venv
           key: v1-dependencies-{{ checksum "requirements/ci.txt" }}
       - run:
+          name: Wait for PostgreSQL and Redis
+          command: dockerize -wait tcp://localhost:5432 -wait tcp://localhost:6379 -timeout 1m
+      - run:
           name: Python Version
           command: python -V
       - run:
           name: Tests
           when: always
+          environment:
+            GCP_PROJECT_ID: vis-kpigrinder-test
+            CELERY_BROKER_URL: redis://localhost:6379/0
+            SENTRY_DSN: localhost
+            BIGQUERY_KPI_TABLE_NAME: ci_test__
+            GHOSTDB_DB_DSN: postgresql://vis:vis@localhost:5432/vis_test
           command: |
             . ../venv/bin/activate
             python -m pytest \
               --pylama --bandit \
               --junitxml=../tests_results/junit.xml \
               --cov=. --cov-report=xml:../tests_artifacts/coverage.xml --cov-report=html:../tests_artifacts/coverage/ \
-              datagrinder/
+              kpigrinder/
       - store_test_results:
           path: ../tests_results/
       - store_artifacts:
@@ -54,7 +74,7 @@ orbs:
 workflows:
   version: 2.1
 
-  datagrinder:
+  kpigrinder:
     jobs:
       - test:
           post-steps:
