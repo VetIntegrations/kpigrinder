@@ -1,6 +1,7 @@
 vis-ghostdb
 
 celery[redis]
+psycopg2-binary
 envparse
 orjson
 sentry-sdk

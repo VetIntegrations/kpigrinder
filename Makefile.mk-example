@@ -1,0 +1,2 @@
+GHOSTDB_PATH := /path/to/ghostdb/
+GHOSTDB_DB_DSN := mysql://vis:vis@localhost:3306/vis_test

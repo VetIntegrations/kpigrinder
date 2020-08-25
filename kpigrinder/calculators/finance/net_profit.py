@@ -3,6 +3,7 @@ from itertools import groupby
 from sqlalchemy import func
 from sqlalchemy.orm import session
 from sqlalchemy.orm.util import aliased
+from sqlalchemy.sql import expression as expr
 
 from ghostdb.bl.selectors.kpi import KPISelector
 from ghostdb.db.models.business import Business
@@ -65,37 +66,6 @@ class NetProfitPMS(BaseKPICalculation):
                 )
 
     @staticmethod
-    def get_gross_revenue(
-        kpi_selector: KPISelector,
-        business: Business,
-        dt_from: datetime,
-        dt_to: datetime,
-        order_rel
-    ):
-        query, ok = kpi_selector.pms_gross_revenue.orderitem_with_all_filters(
-            business,
-            dt_from,
-            dt_to,
-            order_rel=order_rel
-        )
-
-        qs = GeneralGroupAndAggregate.group_and_aggregate(
-            query,
-            [
-                (
-                    'amount',
-                    func.sum(func.IF(
-                        OrderItem.unit_price.is_(None),
-                        OrderItem.amount / 100,
-                        OrderItem.unit_price * OrderItem.quantity / 100
-                    ))
-                ),
-            ]
-        )
-
-        return qs.all()
-
-    @staticmethod
     def get_inventory(
         kpi_selector: KPISelector,
         business: Business,
@@ -118,10 +88,14 @@ class NetProfitPMS(BaseKPICalculation):
             [
                 (
                     'inventory_amount',
-                    func.sum(func.IF(
-                        OrderItem.unit_price.is_(None),
-                        OrderItem.amount / 100,
-                        OrderItem.unit_price * OrderItem.quantity / 100
+                    func.sum(expr.case(
+                        [
+                            (
+                                OrderItem.unit_price.is_(None),
+                                OrderItem.amount / 100,
+                            ),
+                        ],
+                        else_=OrderItem.unit_price * OrderItem.quantity / 100
                     ))
                 ),
             ]
