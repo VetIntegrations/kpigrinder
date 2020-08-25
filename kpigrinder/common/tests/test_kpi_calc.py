@@ -1,3 +1,4 @@
+import pytest
 from datetime import date
 from unittest.mock import Mock
 
@@ -67,7 +68,51 @@ class TestBaseKPICalculation:
         kpi_calc = KPICalculation([storage])
         monkeypatch.setattr(kpi_calc, 'get_db_connection', lambda uri: dbsession)
         monkeypatch.setattr(kpi_calc, 'get_credentials', lambda name: credentials)
+        monkeypatch.setattr(kpi_calc, 'need_to_be_stored', lambda kpi_value: True)
 
         kpi_calc.process(date.today())
 
         storage.store.assert_called_once_with(1)
+
+    @pytest.mark.parametrize(
+        'need_to_be_stored_ret,store_called',
+        (
+            (True, True),
+            (False, False)
+        )
+    )
+    def test_process_check_for_needs_to_store(self, need_to_be_stored_ret, store_called, monkeypatch):
+        dbsession = Mock()
+        storage = Mock()
+
+        credentials = {
+            'conn_type': 'gdb',
+            'login': 'test',
+            'password': 'T3st',
+            'host': 'localhost',
+            'port': 1234,
+            'schema': 'kpigrinder-test',
+        }
+        kpi_calc = KPICalculation([storage])
+        monkeypatch.setattr(kpi_calc, 'get_db_connection', lambda uri: dbsession)
+        monkeypatch.setattr(kpi_calc, 'get_credentials', lambda name: credentials)
+        monkeypatch.setattr(kpi_calc, 'need_to_be_stored', lambda kpi_value: need_to_be_stored_ret)
+
+        kpi_calc.process(date.today())
+
+        if store_called:
+            storage.store.assert_called_once()
+        else:
+            storage.store.assert_not_called()
+
+    @pytest.mark.parametrize(
+        'value, expected_result',
+        (
+            (-1, True),
+            (0, False),
+            (1, True),
+        )
+    )
+    def test_need_to_be_stored(self, value, expected_result):
+        kpi_calc = KPICalculation([])
+        assert kpi_calc.need_to_be_stored(Mock(value=value)) == expected_result
