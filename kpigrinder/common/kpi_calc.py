@@ -35,6 +35,10 @@ class KPICalculationInterface(abc.ABC):
     def get_credentials(name: str):
         ...
 
+    @abc.abstractmethod
+    def need_to_be_stored(self, kpi_value: kpi_models.KPIValue):
+        ...
+
 
 class BaseKPICalculation(KPICalculationInterface):
 
@@ -48,10 +52,14 @@ class BaseKPICalculation(KPICalculationInterface):
         )
 
         for kpi_value in self.calculate(db, dt):
-            self.store(kpi_value)
+            if self.need_to_be_stored(kpi_value):
+                self.store(kpi_value)
 
     def get_storages(self):
         return self._storages
+
+    def need_to_be_stored(self, kpi_value: kpi_models.KPIValue):
+        return kpi_value.value != 0
 
     def store(self, kpi_value: kpi_models.KPIValue):
         for storage in self.get_storages():
