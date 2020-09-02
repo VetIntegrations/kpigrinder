@@ -28,7 +28,7 @@ class BigQueryFormatter:
             'date': val.date.isoformat(),
             'corporation': val.corporation.name,
             'business': val.business.name,
-            'provider': val.provider.full_name,
+            'provider': val.provider.full_name if val.provider else None,
             'client': val.client.full_name if val.client else None,
             'pet': val.pet.name if val.pet else None,
             'value': float(val.value),
@@ -40,7 +40,7 @@ class BigQueryFormatter:
             # 'servicetype': val.servicetype.name if val.servicetype else None,
             'corporation_id': val.corporation_id.hex,
             'business_id': val.business_id.hex,
-            'provider_id': val.provider_id.hex,
+            'provider_id': val.provider_id.hex if val.provider_id else None,
             'client_id': val.client_id.hex if val.client_id else None,
-            'pet_id': val.pet_id,
+            'pet_id': val.pet_id.hex if val.pet_id else None,
         }

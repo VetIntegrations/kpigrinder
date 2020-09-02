@@ -1,7 +1,20 @@
+import abc
+
 from .finance import net_profit, net_revenue, accounts_receivable, cogs, ebitda
+from . import external_kpis
 
 
-class KPIRegistry:
+class AbstractKPIRegistry(abc.ABC):
+
+    CLASSES = tuple()
+
+    @classmethod
+    def get_classes_path(cls):
+        for klass in cls.CLASSES:
+            yield '{}.{}'.format(klass.__module__, klass.__name__)
+
+
+class InternalKPIRegistry(AbstractKPIRegistry):
 
     CLASSES = (
         net_profit.NetProfitPMS,
@@ -14,7 +27,9 @@ class KPIRegistry:
         ebitda.EbitdaERP,
     )
 
-    @classmethod
-    def get_classes_path(cls):
-        for klass in cls.CLASSES:
-            yield '{}.{}'.format(klass.__module__, klass.__name__)
+
+class ExternalKPIRegistry(AbstractKPIRegistry):
+
+    CLASSES = (
+        external_kpis.GenericExternalKPICalculation,
+    )

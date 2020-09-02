@@ -2,7 +2,9 @@ include *.mk
 
 
 worker:
-	celery -A kpigrinder worker --loglevel=debug
+	PYTHONPATH=${GHOSTDB_PATH} \
+	GHOSTDB_DB_DSN=${GHOSTDB_DB_DSN} \
+		celery -A kpigrinder worker --loglevel=debug --purge
 
 test:
 	PYTHONPATH=${GHOSTDB_PATH} \

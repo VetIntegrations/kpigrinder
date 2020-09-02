@@ -11,8 +11,8 @@ class TestRunAllKPICalculation:
         """should run calculations just for previous date"""
         kpi_registry = Mock(**{'get_classes_path.return_value': ('test.kpi_calc', )})
         kpi_calc = Mock()
-        monkeypatch.setattr(kpi, 'KPIRegistry', kpi_registry)
-        monkeypatch.setattr(kpi, 'kpi_calculate', kpi_calc)
+        monkeypatch.setattr(kpi, 'InternalKPIRegistry', kpi_registry)
+        monkeypatch.setattr(kpi, 'internal_kpi_calculate', kpi_calc)
 
         kpi.run_all_kpi_calculation()
         kpi_calc.delay.assert_called_once_with(
@@ -24,8 +24,8 @@ class TestRunAllKPICalculation:
         """should run calculations from start date until today"""
         kpi_registry = Mock(**{'get_classes_path.return_value': ('test.kpi_calc', )})
         kpi_calc = Mock()
-        monkeypatch.setattr(kpi, 'KPIRegistry', kpi_registry)
-        monkeypatch.setattr(kpi, 'kpi_calculate', kpi_calc)
+        monkeypatch.setattr(kpi, 'InternalKPIRegistry', kpi_registry)
+        monkeypatch.setattr(kpi, 'internal_kpi_calculate', kpi_calc)
 
         date_start = date(2020, 5, 15)
         kpi.run_all_kpi_calculation(date_start)
@@ -36,16 +36,24 @@ class TestRunAllKPICalculation:
 
     def test_params_start_and_end_date(self, monkeypatch):
         """should run calculations just in range of given dates"""
-        kpi_registry = Mock(**{'get_classes_path.return_value': ('test.kpi_calc', )})
-        kpi_calc = Mock()
-        monkeypatch.setattr(kpi, 'KPIRegistry', kpi_registry)
-        monkeypatch.setattr(kpi, 'kpi_calculate', kpi_calc)
+        internal_kpi_registry = Mock(**{'get_classes_path.return_value': ('test.int_kpi_calc', )})
+        internal_kpi_calc = Mock()
+        external_kpi_registry = Mock(**{'get_classes_path.return_value': ('test.ext_kpi_calc', )})
+        external_kpi_calc = Mock()
+        monkeypatch.setattr(kpi, 'InternalKPIRegistry', internal_kpi_registry)
+        monkeypatch.setattr(kpi, 'internal_kpi_calculate', internal_kpi_calc)
+        monkeypatch.setattr(kpi, 'ExternalKPIRegistry', external_kpi_registry)
+        monkeypatch.setattr(kpi, 'external_kpi_calculate', external_kpi_calc)
 
         date_start = date(2020, 5, 15)
         date_end = date(2020, 5, 20)
         kpi.run_all_kpi_calculation(date_start, date_end)
-        kpi_calc.delay.assert_has_calls([
-            call(kpi_class_path='test.kpi_calc', dt=date_start + timedelta(days=days))
+        internal_kpi_calc.delay.assert_has_calls([
+            call(kpi_class_path='test.int_kpi_calc', dt=date_start + timedelta(days=days))
+            for days in range((date_end - date_start).days)
+        ])
+        external_kpi_calc.delay.assert_has_calls([
+            call(kpi_class_path='test.ext_kpi_calc', dt=date_start + timedelta(days=days))
             for days in range((date_end - date_start).days)
         ])
 

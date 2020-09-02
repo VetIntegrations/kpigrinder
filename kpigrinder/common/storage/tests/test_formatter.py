@@ -65,5 +65,5 @@ class TestBigQueryFormatter_InternalKPIValue:
             'business_id': kpi_value.business_id.hex,
             'provider_id': kpi_value.provider_id.hex,
             'client_id': kpi_value.client_id.hex,
-            'pet_id': kpi_value.pet_id,
+            'pet_id': kpi_value.pet_id.hex,
         }
