@@ -4,7 +4,7 @@ from decimal import Decimal
 from datetime import date
 from unittest.mock import Mock
 
-from ghostdb.db.models.kpi import KPIValue, KPIDataSource, KPIKind
+from ghostdb.db.models.kpi import InternalKPIValue, KPIDataSource, KPIKind
 from kpigrinder.common.storage.formatter import BigQueryFormatter, UnkonwnObjectFormatterException
 
 
@@ -15,19 +15,19 @@ class TestBigQueryFormatter_General:
             BigQueryFormatter.format({})
 
 
-class TestBigQueryFormatter_KPIValue:
+class TestBigQueryFormatter_InternalKPIValue:
 
     def test_format_factory(self, monkeypatch):
         fmt_kpi_value = Mock()
         monkeypatch.setattr(BigQueryFormatter, '_kpi_value', fmt_kpi_value)
 
-        kpi_value = KPIValue()
+        kpi_value = InternalKPIValue()
         BigQueryFormatter.format(kpi_value)
 
         fmt_kpi_value.assert_called_once_with(kpi_value)
 
     def test_format_full_obj(self):
-        kpi_value = KPIValue(
+        kpi_value = InternalKPIValue(
             data_source=KPIDataSource.PIMS,
             kind=KPIKind.FINANCIAL_CAPEX,
             date=date(2020, 9, 12),

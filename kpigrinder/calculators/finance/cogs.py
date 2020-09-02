@@ -7,7 +7,7 @@ from ghostdb.bl.selectors.kpi import KPISelector
 from ghostdb.db.models.business import Business
 from ghostdb.db.models.provider import Provider
 from ghostdb.db.models.payment import Payment
-from ghostdb.db.models.kpi import KPIValue, KPIKind, KPIDataSource
+from ghostdb.db.models.kpi import InternalKPIValue, KPIKind, KPIDataSource
 from kpigrinder.common.kpi_calc import BaseKPICalculation
 
 
@@ -38,7 +38,7 @@ class CogsPMS(BaseKPICalculation):
             )
 
             for item in query:
-                yield KPIValue(
+                yield InternalKPIValue(
                     data_source=KPIDataSource.PIMS,
                     kind=KPIKind.FINANCIAL_COGS,
                     value=item.amount,
@@ -53,7 +53,7 @@ class CogsERP(BaseKPICalculation):
 
     def calculate(self, db: session.Session, dt: date):
         for provider in db.query(Provider):
-            yield KPIValue(
+            yield InternalKPIValue(
                 data_source=KPIDataSource.ERP,
                 kind=KPIKind.FINANCIAL_COGS,
                 value=0,

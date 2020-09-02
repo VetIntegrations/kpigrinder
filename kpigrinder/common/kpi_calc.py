@@ -23,7 +23,7 @@ class KPICalculationInterface(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def store(self, kpi_value: kpi_models.KPIValue):
+    def store(self, kpi_value: kpi_models.AbstactKPIValue):
         ...
 
     @abc.abstractmethod
@@ -36,7 +36,7 @@ class KPICalculationInterface(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def need_to_be_stored(self, kpi_value: kpi_models.KPIValue):
+    def need_to_be_stored(self, kpi_value: kpi_models.AbstactKPIValue):
         ...
 
 
@@ -58,10 +58,10 @@ class BaseKPICalculation(KPICalculationInterface):
     def get_storages(self):
         return self._storages
 
-    def need_to_be_stored(self, kpi_value: kpi_models.KPIValue):
+    def need_to_be_stored(self, kpi_value: kpi_models.AbstactKPIValue):
         return kpi_value.value != 0
 
-    def store(self, kpi_value: kpi_models.KPIValue):
+    def store(self, kpi_value: kpi_models.AbstactKPIValue):
         for storage in self.get_storages():
             storage.store(kpi_value)
 

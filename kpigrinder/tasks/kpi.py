@@ -20,7 +20,7 @@ def kpi_calculate(kpi_class_path: str, dt: date):
     bq_stor = stor_registry.get_storage(BigQueryStorage, {'table_name': config.BIGQUERY_KPI_TABLE_NAME})
 
     # GhostDB Storage should be first in the list to prefill all related objects in
-    # KPIValue instance as we operate only IDs but for some storages need to have
+    # InternalKPIValue instance as we operate only IDs but for some storages need to have
     # names as well
     kpi_calc = KPICalcClass([gdb_stor, bq_stor])
     kpi_calc.process(dt)
