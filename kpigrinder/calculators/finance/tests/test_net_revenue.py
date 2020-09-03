@@ -1,3 +1,4 @@
+import pytz
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 from unittest.mock import MagicMock, call
@@ -178,6 +179,39 @@ class TestNetRevenuePMS:
 
         assert result_1 == [business_1, ]
         assert result_2 == [business_2, ]
+
+    def test_calculations_with_timezone(self, dbsession):
+        dt = date(2020, 9, 3)
+
+        # 2020.09.03 00:30:00
+        test_date_kiev = datetime(2020, 9, 2, 21, 30).replace(tzinfo=pytz.timezone('Europe/Kiev'))
+        # 2020.09.02 23:30:00
+        test_date_paris = datetime(2020, 9, 2, 21, 30).replace(tzinfo=pytz.timezone('Europe/Paris'))
+
+        corp = CorporationFactory()
+        business = BusinessFactory(corporation=corp, timezone='Europe/Kiev')
+        order = OrderFactory(corporation=corp, business=business, status=OrderStatus.DUE)
+
+        OrderItemFactory(order=order, amount=200, description='Kiev', date=test_date_kiev)
+        OrderItemFactory(order=order, amount=300, description='Paris', date=test_date_paris)
+
+        kpi_calculator = NetRevenuePMS([]).calculate(dbsession, dt)
+        result = {
+            (value.data_source, value.kind, value.provider_id, value.date, value.value.quantize(Decimal('.01')))
+            for value in kpi_calculator
+        }
+
+        # expect order item only for Kiev
+        expected_result = {
+            (
+                KPIDataSource.PIMS,
+                KPIKind.FINANCIAL_NET_REVENUE,
+                None,
+                dt,
+                Decimal(300 / 100.).quantize(Decimal('.01'))
+            ),
+        }
+        assert result == expected_result
 
 
 class TestNetRevenueERP:

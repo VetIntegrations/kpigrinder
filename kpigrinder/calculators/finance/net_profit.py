@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from itertools import groupby
 from sqlalchemy import func
 from sqlalchemy.orm import session
@@ -19,14 +19,11 @@ class NetProfitPMS(BaseKPICalculation):
 
     def calculate(self, db: session.Session, dt: date):
         kpi_selector = KPISelector(db)
-
         order_rel = aliased(Order)
-
-        dt_from = datetime.combine(dt, datetime.min.time())
-        dt_to = dt_from + timedelta(days=1)
-
         businesses = db.query(Business)
+
         for business in businesses:
+            dt_from, dt_to = self.get_datetime_range_with_time_zone(dt, tz=business.timezone)
             gross_revenue = finance_common.get_gross_revenue(
                 kpi_selector,
                 business,
