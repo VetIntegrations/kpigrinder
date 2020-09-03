@@ -2,7 +2,7 @@ from datetime import date
 from sqlalchemy.orm import session
 
 from ghostdb.db.models.provider import Provider
-from ghostdb.db.models.kpi import KPIValue, KPIKind, KPIDataSource
+from ghostdb.db.models.kpi import InternalKPIValue, KPIKind, KPIDataSource
 from kpigrinder.common.kpi_calc import BaseKPICalculation
 
 
@@ -10,7 +10,7 @@ class EbitdaERP(BaseKPICalculation):
 
     def calculate(self, db: session.Session, dt: date):
         for provider in db.query(Provider):
-            yield KPIValue(
+            yield InternalKPIValue(
                 data_source=KPIDataSource.ERP,
                 kind=KPIKind.FINANCIAL_EBITDA,
                 value=0,

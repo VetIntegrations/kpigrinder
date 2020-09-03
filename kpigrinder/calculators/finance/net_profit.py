@@ -9,7 +9,7 @@ from ghostdb.bl.selectors.kpi import KPISelector
 from ghostdb.db.models.business import Business
 from ghostdb.db.models.order import Order, OrderItem
 from ghostdb.db.models.provider import Provider
-from ghostdb.db.models.kpi import KPIValue, KPIKind, KPIDataSource
+from ghostdb.db.models.kpi import InternalKPIValue, KPIKind, KPIDataSource
 from kpigrinder.common.kpi_calc import BaseKPICalculation
 from kpigrinder.calculators.utils import GeneralGroupAndAggregate
 from . import common as finance_common
@@ -51,7 +51,7 @@ class NetProfitPMS(BaseKPICalculation):
                 if value == 0:
                     continue
 
-                yield KPIValue(
+                yield InternalKPIValue(
                     data_source=KPIDataSource.PIMS,
                     kind=KPIKind.FINANCIAL_NET_PROFIT,
                     value=value,
@@ -108,7 +108,7 @@ class NetProfitERP(BaseKPICalculation):
 
     def calculate(self, db: session.Session, dt: date):
         for provider in db.query(Provider):
-            yield KPIValue(
+            yield InternalKPIValue(
                 data_source=KPIDataSource.ERP,
                 kind=KPIKind.FINANCIAL_NET_PROFIT,
                 value=0,
