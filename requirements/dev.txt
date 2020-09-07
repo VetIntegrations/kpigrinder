@@ -73,7 +73,7 @@ stevedore==3.2.0          # via bandit
 text-unidecode==1.3       # via faker
 urllib3==1.25.10          # via requests, sentry-sdk
 vine==1.3.0               # via amqp, celery
-vis-ghostdb==0.1.dev202009021500  # via -r requirements/common.in
+vis-ghostdb==0.1.dev202009071253  # via -r requirements/common.in
 wcwidth==0.2.5            # via pytest
 
 # The following packages are considered to be unsafe in a requirements file:

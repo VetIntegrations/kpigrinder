@@ -57,6 +57,7 @@ class GeneralGroupAndAggregate(BaseGroupAndAggregate):
             (Service, 'department_id', ),
             (Service, 'category_id', ),
             (Service, 'class_id', ),
+            (Service, 'subclass_id'),
         ]
 
 
