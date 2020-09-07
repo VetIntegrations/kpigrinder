@@ -1,4 +1,5 @@
-from datetime import date
+import pytz
+from datetime import date, datetime
 from decimal import Decimal
 
 from ghostdb.db.models.kpi import KPIKind, KPIDataSource
@@ -152,6 +153,39 @@ class TestNetProfitPMS:
             ),
         }
 
+        assert result == expected_result
+
+    def test_calculations_with_timezone(self, dbsession):
+        dt = datetime(2020, 9, 3, 0, 0, 0)
+
+        # 2020.09.03 00:30:00
+        test_date_kiev = datetime(2020, 9, 2, 21, 30).replace(tzinfo=pytz.timezone('Europe/Kiev'))
+        # 2020.09.02 23:30:00
+        test_date_paris = datetime(2020, 9, 2, 21, 30).replace(tzinfo=pytz.timezone('Europe/Paris'))
+
+        corp = CorporationFactory()
+        business = BusinessFactory(corporation=corp, timezone='Europe/Kiev')
+        order = OrderFactory(corporation=corp, business=business, status=OrderStatus.DUE)
+
+        OrderItemFactory(order=order, amount=200, description='Kiev', date=test_date_kiev)
+        OrderItemFactory(order=order, amount=300, description='Paris', date=test_date_paris)
+
+        kpi_calculator = NetProfitPMS([]).calculate(dbsession, dt)
+        result = {
+            (value.data_source, value.kind, value.provider_id, value.date, value.value.quantize(Decimal('.01')))
+            for value in kpi_calculator
+        }
+
+        # expect order item only for Kiev
+        expected_result = {
+            (
+                KPIDataSource.PIMS,
+                KPIKind.FINANCIAL_NET_PROFIT,
+                None,
+                dt,
+                Decimal(300 / 100.).quantize(Decimal('.01'))
+            ),
+        }
         assert result == expected_result
 
 

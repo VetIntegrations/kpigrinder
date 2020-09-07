@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 from sqlalchemy import func
 from sqlalchemy.orm import session
 from sqlalchemy.sql import label
@@ -15,12 +15,12 @@ class CogsPMS(BaseKPICalculation):
 
     def calculate(self, db: session.Session, dt: date):
         kpi_selector = KPISelector(db)
-
-        dt_from = datetime.combine(dt, datetime.min.time())
-        dt_to = dt_from + timedelta(days=1)
-
         businesses = db.query(Business)
+
         for business in businesses:
+            # Until we don’t have real payment data and use “mock” table with time,
+            # only pure date is using. Should be changed after we will understand real data
+            dt_from, dt_to = self.get_datetime_range_with_time_zone(dt, tz=None)
             query, ok = kpi_selector.pms_cogs.payments_with_all_filters(business, dt_from, dt_to)
             query = (
                 query

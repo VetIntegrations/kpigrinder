@@ -1,7 +1,8 @@
 import abc
+import pytz
 import logging
 import typing
-from datetime import date
+from datetime import date, datetime, timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, session
 
@@ -31,12 +32,21 @@ class KPICalculationInterface(abc.ABC):
         ...
 
     @staticmethod
-    @abc.abstractstaticmethod
+    @abc.abstractmethod
     def get_credentials(name: str):
         ...
 
     @abc.abstractmethod
     def need_to_be_stored(self, kpi_value: kpi_models.AbstactKPIValue):
+        ...
+
+    @staticmethod
+    @abc.abstractmethod
+    def get_datetime_range_with_time_zone(
+        dt: date,
+        tz: [str, None],
+        time_delta: timedelta
+    ) -> typing.Tuple[datetime, datetime]:
         ...
 
 
@@ -88,3 +98,17 @@ class BaseKPICalculation(KPICalculationInterface):
         sm = SecretManager()
 
         return sm.get_secret(name)
+
+    @staticmethod
+    def get_datetime_range_with_time_zone(
+        dt: date,
+        tz: [str, None],
+        time_delta: timedelta = timedelta(days=1)
+    ) -> typing.Tuple[datetime, datetime]:
+        dt_from = datetime.combine(dt, datetime.min.time())
+        dt_to = dt_from + time_delta
+        if tz:
+            dt_from = pytz.timezone(tz).localize(dt_from)
+            dt_to = pytz.timezone(tz).localize(dt_to)
+
+        return dt_from, dt_to

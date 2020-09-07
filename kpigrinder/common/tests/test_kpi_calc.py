@@ -1,5 +1,6 @@
+import pytz
 import pytest
-from datetime import date
+from datetime import date, datetime, timedelta
 from unittest.mock import Mock
 
 from kpigrinder.common.kpi_calc import BaseKPICalculation
@@ -116,3 +117,43 @@ class TestBaseKPICalculation:
     def test_need_to_be_stored(self, value, expected_result):
         kpi_calc = KPICalculation([])
         assert kpi_calc.need_to_be_stored(Mock(value=value)) == expected_result
+
+    @pytest.mark.parametrize(
+        'tz',
+        (
+            'Europe/Paris',
+            None
+        )
+    )
+    def test_get_datetime_range_with_time_zone(self, tz):
+
+        kpi_calc = KPICalculation([])
+        dt = date(2020, 9, 3)
+
+        test_dt_from = datetime.combine(dt, datetime.min.time())
+        test_dt_to = test_dt_from + timedelta(days=1)
+
+        dt_from, dt_to = kpi_calc.get_datetime_range_with_time_zone(dt, tz=tz)
+        if tz:
+            test_dt_from = pytz.timezone(tz).localize(test_dt_from)
+            test_dt_to = pytz.timezone(tz).localize(test_dt_to)
+
+        assert dt_from == test_dt_from
+        assert dt_to == test_dt_to
+
+    def test_get_datetime_range_with_time_zone__timedelta_default(self):
+
+        kpi_calc = KPICalculation([])
+        dt = date(2020, 9, 3)
+
+        test_dt_from = datetime.combine(dt, datetime.min.time())
+
+        # timedelta is default
+        dt_from, dt_to = kpi_calc.get_datetime_range_with_time_zone(dt, tz=None)
+        assert dt_from == test_dt_from
+        assert dt_to == test_dt_from + timedelta(days=1)
+
+        # timedelta is 30 days
+        dt_from, dt_to = kpi_calc.get_datetime_range_with_time_zone(dt, tz=None, time_delta=timedelta(days=30))
+        assert dt_from == test_dt_from
+        assert dt_to == test_dt_from + timedelta(days=30)
