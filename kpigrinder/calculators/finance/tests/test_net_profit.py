@@ -8,6 +8,7 @@ from ghostdb.db.models.tests.factories import (
     CorporationFactory, BusinessFactory, ProviderFactory, OrderFactory, OrderItemFactory
 )
 from kpigrinder.calculators.finance.net_profit import NetProfitPMS, NetProfitERP
+from .utils import random_datetime_for_date
 
 
 class TestNetProfitPMS:
@@ -19,11 +20,17 @@ class TestNetProfitPMS:
         provider_1 = ProviderFactory(business=business)
         order1 = OrderFactory(corporation=corp, business=business, provider=provider_1, status=OrderStatus.DUE)
         # here we should use amount
-        OrderItemFactory(order=order1, amount=520, description='', date=dt)
-        # here we should use quantity and unit_price
-        OrderItemFactory(order=order1, quantity=100, unit_price=12.45, amount=500, description='', date=dt)
         OrderItemFactory(
-            order=order1, quantity=100, unit_price=3.45, amount=500, is_inventory=True, description='', date=dt
+            order=order1, amount=520, description='', date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        # here we should use quantity and unit_price
+        OrderItemFactory(
+            order=order1, quantity=100, unit_price=12.45, amount=500, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        OrderItemFactory(
+            order=order1, quantity=100, unit_price=3.45, amount=500, is_inventory=True, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
         )
 
         kpi_calculator = NetProfitPMS([]).calculate(dbsession, dt)
@@ -51,9 +58,14 @@ class TestNetProfitPMS:
         provider_1 = ProviderFactory(business=business)
         order1 = OrderFactory(corporation=corp, business=business, provider=provider_1, status=OrderStatus.DUE)
         # here we should use amount
-        OrderItemFactory(order=order1, amount=520, description='', date=dt)
+        OrderItemFactory(
+            order=order1, amount=520, description='', date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
         # here we should use quantity and unit_price
-        OrderItemFactory(order=order1, quantity=100, unit_price=12.45, amount=500, description='', date=dt)
+        OrderItemFactory(
+            order=order1, quantity=100, unit_price=12.45, amount=500, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
 
         kpi_calculator = NetProfitPMS([]).calculate(dbsession, dt)
 
@@ -80,20 +92,32 @@ class TestNetProfitPMS:
         provider_1 = ProviderFactory(business=business)
         order1 = OrderFactory(corporation=corp, business=business, provider=provider_1, status=OrderStatus.DUE)
         # here we should use amount
-        OrderItemFactory(order=order1, amount=520, description='', date=dt)
-        # here we should use quantity and unit_price
-        OrderItemFactory(order=order1, quantity=100, unit_price=12.45, amount=500, description='', date=dt)
         OrderItemFactory(
-            order=order1, quantity=100, unit_price=3.45, amount=500, is_inventory=True, description='', date=dt
+            order=order1, amount=520, description='', date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        # here we should use quantity and unit_price
+        OrderItemFactory(
+            order=order1, quantity=100, unit_price=12.45, amount=500, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        OrderItemFactory(
+            order=order1, quantity=100, unit_price=3.45, amount=500, is_inventory=True, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
         )
         provider_2 = ProviderFactory(business=business)
         order2 = OrderFactory(corporation=corp, business=business, provider=provider_2, status=OrderStatus.DUE)
         # here we should use amount
-        OrderItemFactory(order=order2, amount=320, description='', date=dt)
-        # here we should use quantity and unit_price
-        OrderItemFactory(order=order2, quantity=100, unit_price=7.45, amount=500, description='', date=dt)
         OrderItemFactory(
-            order=order2, quantity=100, unit_price=1.45, amount=500, is_inventory=True, description='', date=dt
+            order=order2, amount=320, description='', date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        # here we should use quantity and unit_price
+        OrderItemFactory(
+            order=order2, quantity=100, unit_price=7.45, amount=500, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        OrderItemFactory(
+            order=order2, quantity=100, unit_price=1.45, amount=500, is_inventory=True, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
         )
 
         kpi_calculator = NetProfitPMS([]).calculate(dbsession, dt)
@@ -128,14 +152,22 @@ class TestNetProfitPMS:
         provider_1 = ProviderFactory(business=business)
         order1 = OrderFactory(corporation=corp, business=business, provider=provider_1, status=OrderStatus.DUE)
         # here we should use amount
-        OrderItemFactory(order=order1, amount=520, description='', date=dt)
-        # here we should use quantity and unit_price
-        OrderItemFactory(order=order1, quantity=100, unit_price=12.45, amount=500, description='', date=dt)
         OrderItemFactory(
-            order=order1, quantity=100, unit_price=3.45, amount=500, is_inventory=True, description='', date=dt
+            order=order1, amount=520, description='', date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        # here we should use quantity and unit_price
+        OrderItemFactory(
+            order=order1, quantity=100, unit_price=12.45, amount=500, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
+        OrderItemFactory(
+            order=order1, quantity=100, unit_price=3.45, amount=500, is_inventory=True, description='',
+            date=random_datetime_for_date(dt, timezone=business.timezone)
         )
         order2 = OrderFactory(corporation=corp, business=business, provider=provider_1, status=OrderStatus.DUE)
-        OrderItemFactory(order=order2, amount=115, description='', date=dt)
+        OrderItemFactory(
+            order=order2, amount=115, description='', date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
 
         kpi_calculator = NetProfitPMS([]).calculate(dbsession, dt)
 

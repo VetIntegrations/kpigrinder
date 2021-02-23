@@ -13,7 +13,7 @@ test:
 			--pylama \
 			--bandit \
 			--cov=. \
-			kpigrinder/
+			kpigrinder/${TEST}
 
 deps-compile:
 	for name in common ci dev; do \

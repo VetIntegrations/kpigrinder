@@ -5,76 +5,184 @@
 #    pip-compile --no-emit-index-url requirements/ci.in
 #
 --trusted-host pypi.api.vet
---trusted-host localhost
 
-alembic==1.4.2            # via vis-ghostdb
-amqp==2.6.1               # via kombu
-attrs==19.3.0             # via pytest
-bandit==1.6.2             # via pytest-bandit
-billiard==3.6.3.0         # via celery
-cachetools==4.1.1         # via google-auth
-celery[redis]==4.4.7      # via -r requirements/common.in
-certifi==2020.6.20        # via requests, sentry-sdk
-cffi==1.14.2              # via google-crc32c
-chardet==3.0.4            # via requests
-coverage==5.2.1           # via pytest-cov
-envparse==0.2.0           # via -r requirements/common.in
-factory-boy==3.0.1        # via -r requirements/ci.in
-faker==4.1.2              # via factory-boy
-gitdb==4.0.5              # via gitpython
-gitpython==3.1.7          # via bandit
-google-api-core[grpc]==1.22.1  # via google-cloud-bigquery, google-cloud-core, google-cloud-secret-manager
-google-auth==1.20.1       # via google-api-core
-google-cloud-bigquery==1.26.1  # via -r requirements/common.in
-google-cloud-core==1.4.1  # via google-cloud-bigquery
-google-cloud-secret-manager==1.0.0  # via -r requirements/common.in
-google-crc32c==0.1.0      # via google-resumable-media
-google-resumable-media==0.7.1  # via google-cloud-bigquery
-googleapis-common-protos[grpc]==1.52.0  # via google-api-core, grpc-google-iam-v1
-grpc-google-iam-v1==0.12.3  # via google-cloud-secret-manager
-grpcio==1.31.0            # via google-api-core, googleapis-common-protos, grpc-google-iam-v1
-idna==2.10                # via requests
-kombu==4.6.11             # via celery
-mako==1.1.3               # via alembic
-markupsafe==1.1.1         # via mako
-mccabe==0.6.1             # via pylama
-more-itertools==8.4.0     # via pytest
-orjson==3.3.1             # via -r requirements/common.in
-packaging==20.4           # via pytest
-pbr==5.4.5                # via stevedore
-pluggy==0.13.1            # via pytest
-protobuf==3.12.4          # via google-api-core, googleapis-common-protos
-psycopg2-binary==2.8.5    # via -r requirements/common.in
-py==1.9.0                 # via pytest
-pyasn1-modules==0.2.8     # via google-auth
-pyasn1==0.4.8             # via pyasn1-modules, rsa
-pycodestyle==2.6.0        # via pylama
-pycparser==2.20           # via cffi
-pydocstyle==5.0.2         # via pylama
-pyflakes==2.2.0           # via pylama
-pylama==7.7.1             # via -r requirements/ci.in
-pyparsing==2.4.7          # via packaging
-pytest-bandit==0.5.2      # via -r requirements/ci.in
-pytest-cov==2.10.0        # via -r requirements/ci.in
-pytest==5.4.3             # via -r requirements/ci.in, pytest-bandit, pytest-cov
-python-dateutil==2.8.1    # via alembic, faker
-python-editor==1.0.4      # via alembic
-pytz==2020.1              # via celery, google-api-core
-pyyaml==5.3.1             # via bandit
-redis==3.5.3              # via celery
-requests==2.24.0          # via google-api-core
-rsa==4.6                  # via google-auth
-sentry-sdk==0.16.3        # via -r requirements/common.in, vis-ghostdb
-six==1.15.0               # via bandit, google-api-core, google-auth, google-cloud-bigquery, google-resumable-media, grpcio, packaging, protobuf, python-dateutil
-smmap==3.0.4              # via gitdb
-snowballstemmer==2.0.0    # via pydocstyle
-sqlalchemy==1.3.18        # via alembic
-stevedore==3.2.0          # via bandit
-text-unidecode==1.3       # via faker
-urllib3==1.25.10          # via requests, sentry-sdk
-vine==1.3.0               # via amqp, celery
-vis-ghostdb==0.1.dev202009071253  # via -r requirements/common.in
-wcwidth==0.2.5            # via pytest
+alembic==1.4.2
+    # via vis-ghostdb
+amqp==2.6.1
+    # via kombu
+attrs==19.3.0
+    # via pytest
+bandit==1.6.2
+    # via pytest-bandit
+billiard==3.6.3.0
+    # via celery
+cachetools==4.1.1
+    # via google-auth
+celery[redis]==4.4.7
+    # via -r requirements/common.in
+certifi==2020.6.20
+    # via
+    #   requests
+    #   sentry-sdk
+cffi==1.14.2
+    # via google-crc32c
+chardet==3.0.4
+    # via requests
+coverage==5.2.1
+    # via pytest-cov
+envparse==0.2.0
+    # via -r requirements/common.in
+factory-boy==3.0.1
+    # via -r requirements/ci.in
+faker==4.1.2
+    # via factory-boy
+gitdb==4.0.5
+    # via gitpython
+gitpython==3.1.7
+    # via bandit
+google-api-core[grpc]==1.22.1
+    # via
+    #   google-cloud-bigquery
+    #   google-cloud-core
+    #   google-cloud-secret-manager
+google-auth==1.20.1
+    # via google-api-core
+google-cloud-bigquery==1.26.1
+    # via -r requirements/common.in
+google-cloud-core==1.4.1
+    # via google-cloud-bigquery
+google-cloud-secret-manager==1.0.0
+    # via -r requirements/common.in
+google-crc32c==0.1.0
+    # via google-resumable-media
+google-resumable-media==0.7.1
+    # via google-cloud-bigquery
+googleapis-common-protos[grpc]==1.52.0
+    # via
+    #   google-api-core
+    #   grpc-google-iam-v1
+grpc-google-iam-v1==0.12.3
+    # via google-cloud-secret-manager
+grpcio==1.31.0
+    # via
+    #   google-api-core
+    #   googleapis-common-protos
+    #   grpc-google-iam-v1
+idna==2.10
+    # via requests
+kombu==4.6.11
+    # via celery
+mako==1.1.3
+    # via alembic
+markupsafe==1.1.1
+    # via mako
+mccabe==0.6.1
+    # via pylama
+more-itertools==8.4.0
+    # via pytest
+orjson==3.3.1
+    # via -r requirements/common.in
+packaging==20.4
+    # via pytest
+pbr==5.4.5
+    # via stevedore
+pluggy==0.13.1
+    # via pytest
+protobuf==3.12.4
+    # via
+    #   google-api-core
+    #   googleapis-common-protos
+psycopg2-binary==2.8.5
+    # via -r requirements/common.in
+py==1.9.0
+    # via pytest
+pyasn1-modules==0.2.8
+    # via google-auth
+pyasn1==0.4.8
+    # via
+    #   pyasn1-modules
+    #   rsa
+pycodestyle==2.6.0
+    # via pylama
+pycparser==2.20
+    # via cffi
+pydocstyle==5.0.2
+    # via pylama
+pyflakes==2.2.0
+    # via pylama
+pylama==7.7.1
+    # via -r requirements/ci.in
+pyparsing==2.4.7
+    # via packaging
+pytest-bandit==0.5.2
+    # via -r requirements/ci.in
+pytest-cov==2.10.0
+    # via -r requirements/ci.in
+pytest==5.4.3
+    # via
+    #   -r requirements/ci.in
+    #   pytest-bandit
+    #   pytest-cov
+python-dateutil==2.8.1
+    # via
+    #   alembic
+    #   faker
+python-editor==1.0.4
+    # via alembic
+pytz==2020.1
+    # via
+    #   celery
+    #   google-api-core
+pyyaml==5.3.1
+    # via bandit
+redis==3.5.3
+    # via celery
+requests==2.24.0
+    # via google-api-core
+rsa==4.6
+    # via google-auth
+sentry-sdk==0.16.3
+    # via
+    #   -r requirements/common.in
+    #   vis-ghostdb
+six==1.15.0
+    # via
+    #   bandit
+    #   google-api-core
+    #   google-auth
+    #   google-cloud-bigquery
+    #   google-resumable-media
+    #   grpcio
+    #   packaging
+    #   protobuf
+    #   python-dateutil
+    #   sqlalchemy-utils
+smmap==3.0.4
+    # via gitdb
+snowballstemmer==2.0.0
+    # via pydocstyle
+sqlalchemy-utils==0.36.8
+    # via vis-ghostdb
+sqlalchemy==1.3.18
+    # via
+    #   alembic
+    #   sqlalchemy-utils
+stevedore==3.2.0
+    # via bandit
+text-unidecode==1.3
+    # via faker
+urllib3==1.25.10
+    # via
+    #   requests
+    #   sentry-sdk
+vine==1.3.0
+    # via
+    #   amqp
+    #   celery
+vis-ghostdb==0.1.dev202102161124
+    # via -r requirements/common.in
+wcwidth==0.2.5
+    # via pytest
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
