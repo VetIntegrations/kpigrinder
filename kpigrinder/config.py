@@ -16,6 +16,9 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+DB_POOL_SIZE = env.int('DB_POOL_SIZE', default=10)
+DB_MAX_OVERFLOW = env.int('DB_MAX_OVERFLOW', default=20)
+
 SENTRY_DSN = env.str('SENTRY_DSN')
 
 SECRET_MANAGER_NAME_PREFIX = env.str('SECRET_MANAGER_NAME_PREFIX', default='')

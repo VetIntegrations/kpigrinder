@@ -30,6 +30,13 @@ jobs:
             echo -e "extra-index-url = ${VIS_PYPI_URL}" >> ~/.config/pip/pip.conf
             echo -e "trusted-host = pypi.api.vet"
       - run:
+          name: "PostgreSQL: configure extensions"
+          command: |
+            sudo apt install -y postgresql-client
+            psql -h localhost -U vis -c "CREATE EXTENSION IF NOT EXISTS ltree;" vis_test
+          environment:
+            PGPASSWORD: vis
+      - run:
           name: Install Requirements
           command: |
             python -m venv ../venv
@@ -51,8 +58,9 @@ jobs:
           environment:
             GCP_PROJECT_ID: vis-kpigrinder-test
             CELERY_BROKER_URL: redis://localhost:6379/0
-            SENTRY_DSN: localhost
+            SENTRY_DSN:
             BIGQUERY_KPI_TABLE_NAME: ci_test__
+            SECRET_MANAGER_NAME_PREFIX: citest
             GHOSTDB_DB_DSN: postgresql://vis:vis@localhost:5432/vis_test
           command: |
             . ../venv/bin/activate
