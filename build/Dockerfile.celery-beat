@@ -1,0 +1,24 @@
+FROM python:3.8-slim
+
+ARG PYPI_LOGIN
+ARG PYPI_PASSWORD
+
+RUN useradd user
+
+WORKDIR /kpigrinder
+
+COPY kpigrinder kpigrinder
+COPY requirements requirements
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install \
+    -r requirements/common.txt \
+    --extra-index-url http://${PYPI_LOGIN}:${PYPI_PASSWORD}@pypi.api.vet:8080/ \
+    --trusted-host pypi.api.vet
+RUN apt-get purge -y --auto-remove build-essential
+
+USER user
+
+CMD celery -A kpigrinder beat --loglevel=INFO --schedule /tmp/celerybeat-schedule
