@@ -12,7 +12,7 @@ class TestBigQueryFormatter_General:
 
     def test_exception_on_unknown_object(self):
         with pytest.raises(UnkonwnObjectFormatterException):
-            BigQueryFormatter.format({})
+            BigQueryFormatter.format(tuple())
 
 
 class TestBigQueryFormatter_InternalKPIValue:

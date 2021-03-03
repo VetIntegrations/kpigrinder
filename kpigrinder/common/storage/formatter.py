@@ -13,6 +13,8 @@ class BigQueryFormatter:
     def format(cls, obj: typing.Any):
         if isinstance(obj, AbstactKPIValue):
             return cls._kpi_value(obj)
+        elif isinstance(obj, dict):
+            return obj
 
         raise UnkonwnObjectFormatterException(
             'BigQuery Formatter doesn\'t suppoer formatting objects of type: {}'.format(
