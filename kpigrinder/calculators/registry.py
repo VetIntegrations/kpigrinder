@@ -25,6 +25,7 @@ class InternalKPIRegistry(AbstractKPIRegistry):
         cogs.CogsPMS,
         cogs.CogsERP,
         ebitda.EbitdaERP,
+        ebitda.Ebitda,
     )
 
 
@@ -33,3 +34,4 @@ class ExternalKPIRegistry(AbstractKPIRegistry):
     CLASSES = (
         external_kpis.GenericExternalKPICalculation,
     )
+    # ...

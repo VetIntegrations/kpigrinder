@@ -1,3 +1,4 @@
+import json
 import time
 import pytest
 from hashlib import sha1
@@ -63,6 +64,27 @@ class TestStorageRegistry:
         }
 
         assert registry.get_storage(storage_class, {}) == storage
+
+        storage_class.assert_not_called
+        storage.connect.assert_not_called
+
+    def test_get_storage_take_existing_case_with_object_in_options(self, dbsession):
+        storage = Mock()
+        storage_class = Mock(__name__='TestStorage', return_value=storage, )
+        registry = StorageRegistry()
+        serialized_params = json.dumps({
+            'db': id(dbsession),
+        })
+        key = '{src_path}:{class_name}-{params}'.format(
+            src_path=storage_class.__module__,
+            class_name=storage_class.__name__,
+            params=sha1(serialized_params.encode('ascii')).hexdigest(),
+        )
+        registry._storages == {
+            key: [time.time(), storage]
+        }
+
+        assert registry.get_storage(storage_class, {'db': dbsession}) == storage
 
         storage_class.assert_not_called
         storage.connect.assert_not_called

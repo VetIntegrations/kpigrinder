@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker, session
 
 from ghostdb.db.models import kpi as kpi_models
 from kpigrinder import config
+from kpigrinder.common.storage import ghostdb, bigquery
 from kpigrinder.utils.secret_manager import SecretManager
 
 
@@ -56,7 +57,7 @@ class BaseKPICalculation(KPICalculationInterface):
         super().__init__()
         self._storages = storages
 
-    def process(self, dt: date, query_filter: dict = None):
+    def process(self, db: session.Session, dt: date, query_filter: dict = None):
         db = self.get_db_connection(
             self.get_db_uri(self.get_credentials(config.CONNECTION_GHOSTDB))
         )
@@ -69,11 +70,26 @@ class BaseKPICalculation(KPICalculationInterface):
         return self._storages
 
     def need_to_be_stored(self, kpi_value: kpi_models.AbstactKPIValue):
-        return kpi_value.value != 0
+        value = None
+        if isinstance(kpi_value, dict):
+            value = kpi_value['value']
+        else:
+            value = kpi_value.value
+        return bool(value)
 
     def store(self, kpi_value: kpi_models.AbstactKPIValue):
         for storage in self.get_storages():
             storage.store(kpi_value)
+
+    def get_ghostdb_client(self):
+        for storage in self._storages:
+            if isinstance(storage, ghostdb.GhostDBStorage):
+                return storage.get_connection()
+
+    def get_bigquery_client(self):
+        for storage in self._storages:
+            if isinstance(storage, bigquery.BigQueryStorage):
+                return storage.get_connection()
 
     @staticmethod
     def get_db_uri(credentials: dict) -> str:

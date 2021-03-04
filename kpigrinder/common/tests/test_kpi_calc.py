@@ -71,7 +71,7 @@ class TestBaseKPICalculation:
         monkeypatch.setattr(kpi_calc, 'get_credentials', lambda name: credentials)
         monkeypatch.setattr(kpi_calc, 'need_to_be_stored', lambda kpi_value: True)
 
-        kpi_calc.process(date.today())
+        kpi_calc.process(dbsession, date.today())
 
         storage.store.assert_called_once_with(1)
 
@@ -99,7 +99,7 @@ class TestBaseKPICalculation:
         monkeypatch.setattr(kpi_calc, 'get_credentials', lambda name: credentials)
         monkeypatch.setattr(kpi_calc, 'need_to_be_stored', lambda kpi_value: need_to_be_stored_ret)
 
-        kpi_calc.process(date.today())
+        kpi_calc.process(dbsession, date.today())
 
         if store_called:
             storage.store.assert_called_once()

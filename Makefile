@@ -9,7 +9,7 @@ worker:
 
 test:
 	PYTHONPATH=${GHOSTDB_PATH} \
-	GHOSTDB_DB_DSN=${GHOSTDB_DB_DSN} \
+	GHOSTDB_DB_DSN=${GHOSTDB_DB_DSN_FOR_TEST} \
 		python -m pytest \
 			--pylama \
 			--bandit \

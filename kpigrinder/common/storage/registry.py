@@ -1,9 +1,16 @@
 import time
 import orjson
 from hashlib import sha1
+from sqlalchemy.orm import session
 
 from kpigrinder.config import STORAGE_REGISTRY_TTL
 from kpigrinder.utils.singleton import Singleton
+
+
+def json_ext_serialize(obj):
+    if isinstance(obj, session.Session):
+        return id(obj)
+    raise TypeError('unable to serialize type {}'.format(type(obj)))
 
 
 class StorageRegistry(metaclass=Singleton):
@@ -17,7 +24,7 @@ class StorageRegistry(metaclass=Singleton):
         key = '{src_path}:{class_name}-{params}'.format(
             src_path=klass.__module__,
             class_name=klass.__name__,
-            params=sha1(orjson.dumps(options)).hexdigest(),
+            params=sha1(orjson.dumps(options, default=json_ext_serialize)).hexdigest(),
         )
 
         ttl, instance = self._storages.get(key, [0, None])

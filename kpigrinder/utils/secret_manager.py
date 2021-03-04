@@ -1,6 +1,5 @@
 import json
 from functools import lru_cache
-from google.api_core.exceptions import NotFound
 from google.cloud import secretmanager_v1beta1 as secretmanager
 
 from kpigrinder import config

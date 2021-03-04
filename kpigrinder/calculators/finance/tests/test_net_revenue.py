@@ -13,6 +13,7 @@ from ghostdb.db.models.tests.factories import (
 )
 from kpigrinder.calculators.finance.net_revenue import NetRevenuePMS, NetRevenueERP
 from kpigrinder.calculators.utils import ClientGroupAndAggregate
+from .utils import random_datetime_for_date
 
 
 def to_sql(statement):
@@ -33,20 +34,28 @@ class TestNetRevenuePMS:
         )
 
         # here we should use amount
-        OrderItemFactory(order=order1, description="ANESTHESIA-TKX INJ.", amount=200, date=dt)
+        OrderItemFactory(
+            order=order1, description="ANESTHESIA-TKX INJ.", amount=200,
+            date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
 
         # here we should use quantity and unit_price
         OrderItemFactory(
-            order=order1, description="ANESTHESIA-TKX INJ.", quantity=100, unit_price=2.15, amount=125, date=dt
+            order=order1, description="ANESTHESIA-TKX INJ.", quantity=100, unit_price=2.15, amount=125,
+            date=random_datetime_for_date(dt, timezone=business.timezone)
         )
 
         # here we should use discount
         OrderItemFactory(
-            order=order1, description="Tumor Removal Large 7-10cm", amount=100, discount_amount=50, date=dt
+            order=order1, description="Tumor Removal Large 7-10cm", amount=100, discount_amount=50,
+            date=random_datetime_for_date(dt, timezone=business.timezone)
         )
 
         # here we should use refund
-        OrderItemFactory(order=order1, description="It's refundable", amount=-200, date=dt)
+        OrderItemFactory(
+            order=order1, description="It's refundable", amount=-200,
+            date=random_datetime_for_date(dt, timezone=business.timezone)
+        )
 
         kpi_calculator = NetRevenuePMS([]).calculate(dbsession, dt)
 
