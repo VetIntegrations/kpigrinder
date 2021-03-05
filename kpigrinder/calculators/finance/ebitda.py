@@ -48,10 +48,11 @@ class Ebitda(BaseKPICalculation):
                 businesses.city,
                 businesses.state,
                 max(deals.updated_at)
-            FROM {dataset}.deals
-            JOIN {dataset}.businesses on deals.source_business_id = businesses.source_id
+            FROM `{dataset}.deals` as deals
+            JOIN `{dataset}.businesses` as businesses on deals.source_business_id = businesses.source_id
             WHERE
                 deals.ebitda is not null
+                AND deals.updated_at <= '{date}'
             GROUP BY
                 businesses.customer_name,
                 deals.source_id,
@@ -61,7 +62,7 @@ class Ebitda(BaseKPICalculation):
                 businesses.country,
                 businesses.city,
                 businesses.state
-            '''.format(dataset='testing')
+            '''.format(dataset='testing', date=dt.isoformat())
         )
         result = query.result()
         corporations = self.get_corporations(db)
