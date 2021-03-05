@@ -1,6 +1,6 @@
 import time
 import orjson
-from hashlib import sha1
+from hashlib import sha224
 from sqlalchemy.orm import session
 
 from kpigrinder.config import STORAGE_REGISTRY_TTL
@@ -24,7 +24,7 @@ class StorageRegistry(metaclass=Singleton):
         key = '{src_path}:{class_name}-{params}'.format(
             src_path=klass.__module__,
             class_name=klass.__name__,
-            params=sha1(orjson.dumps(options, default=json_ext_serialize)).hexdigest(),
+            params=sha224(orjson.dumps(options, default=json_ext_serialize)).hexdigest(),
         )
 
         ttl, instance = self._storages.get(key, [0, None])

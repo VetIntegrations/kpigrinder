@@ -65,7 +65,7 @@ jobs:
           command: |
             . ../venv/bin/activate
             python -m pytest \
-              --pylama --bandit \
+              --pylava --bandit \
               --junitxml=../tests_results/junit.xml \
               --cov=. --cov-report=xml:../tests_artifacts/coverage.xml --cov-report=html:../tests_artifacts/coverage/ \
               kpigrinder/
