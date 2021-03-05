@@ -1,0 +1,92 @@
+name: KPIGrinder
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      ghostdb_ver:
+        description: "GhostDB version"
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: vis_test
+          POSTGRES_USER: vis
+          POSTGRES_PASSWORD: vis
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: "PostgreSQL: configure extensions"
+        run: |
+          sudo apt install -y postgresql-client
+          psql -h localhost -U vis -c "CREATE EXTENSION IF NOT EXISTS ltree;" vis_test
+        env:
+          PGPASSWORD: vis
+      - name: Create VirtualEnv
+        run: python -m venv ~/.venv
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.venv
+            ~/.cache/pip
+            !~/.config/pip/pip.conf
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/ci.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+      - name: Config VIS PyPi Repository
+        run: |
+          mkdir -p ~/.config/pip/
+          echo -e "[global]" >> ~/.config/pip/pip.conf
+          echo -e "extra-index-url = ${{ secrets.VIS_PYPI_URL }}" >> ~/.config/pip/pip.conf
+          echo -e "trusted-host = pypi.api.vet"
+      - name: Install requirements
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          source ~/.venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements/ci.txt
+      - name: Use exact version of GhostDB
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          source ~/.venv/bin/activate
+          pip install --trusted-host pypi.api.vet -U vis-ghostdb==${{ github.event.inputs.ghostdb_ver }}
+      - name: Tests
+        env:
+          GCP_PROJECT_ID: vis-kpigrinder-test
+          CELERY_BROKER_URL: redis://localhost:6379/0
+          SENTRY_DSN:
+          BIGQUERY_KPI_TABLE_NAME: ci_test__
+          SECRET_MANAGER_NAME_PREFIX: citest
+          GHOSTDB_DB_DSN: postgresql://vis:vis@localhost:5432/vis_test
+        run: |
+          source ~/.venv/bin/activate
+          python -m pytest \
+              --pylama --bandit \
+              --junitxml=tests_results/junit.xml \
+              --cov=. --cov-report=xml:tests_artifacts/coverage.xml --cov-report=html:tests_artifacts/coverage/ \
+              kpigrinder/
+        if: ${{ job.status == 'success' }}
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          path: tests_results/
+        if: ${{ always() }}
