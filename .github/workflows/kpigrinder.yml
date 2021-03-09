@@ -26,6 +26,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python 3.8
@@ -80,7 +84,7 @@ jobs:
         run: |
           source ~/.venv/bin/activate
           python -m pytest \
-              --pylama --bandit \
+              --pylava --bandit \
               --junitxml=tests_results/junit.xml \
               --cov=. --cov-report=xml:tests_artifacts/coverage.xml --cov-report=html:tests_artifacts/coverage/ \
               kpigrinder/
